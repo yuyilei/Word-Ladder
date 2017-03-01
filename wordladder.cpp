@@ -1,21 +1,31 @@
 #include<cstring>
 #include<iostream>
+#include<fstream>
 using namespace std;
 
 
 int main() {
 
-    char dic[30] ; 
-    char w1[20] ;
-    char w2[20] ;
+    string dic ; 
+    string w1 ;
+    string w2 ;
     int len1 ; 
     int len2 ; 
+    ifstream infile ;
+    ofstream outfile ;
 
     cout<<"Welcome to CS 106B Word Ladder."<<endl ; 
     cout<<"Please give me two English words, and I will change the " <<endl ; 
     cout<<"first into the second by changing one letter at a time."<<endl ; 
     cout<<"Dictionary file name?"<<endl ;
     
+    infile.open(dic.c_str()) ; 
+
+    if (infile.fail() ) {
+        Error("Could not open the file!! ") ;
+        infile.fail() ;
+        }
+
     cin>>dic ;
     
     cout<<"Word #1 (or Enter to quit): "<<endl ; 
