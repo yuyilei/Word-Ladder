@@ -145,6 +145,19 @@ int main() {
         }
 
   }
+    long min = 10000000 ;
+    stack<string> mini ;
+    while ( !queue.isEmpty() ){
+    
+        temp = queue.dequeue() ;
+        if ( temp.size() < mini ){
+            min = temp.size() ;
+            mini = temp ;
+       }
+        
+    }
+
+
     return 0;
 
    
