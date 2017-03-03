@@ -103,31 +103,29 @@ int main() {
         Stack<string> temp ;
         stack.push(w1) ;
         queue.enqueue(stack) ;
-        
+        Lexicon used<"used.txt"> ;  // 存已存在的ladder 
+        Queue<stack> res ;
 
-        while ( !queue.isEmpty() ) {
+        while ( !queue.isEmpty() ) { // 循环条件有问题啊!!
         
-            temp = queue.dequeue() ;
-            string str = temp.peek() ;
-
-            int len = str.strlen() ;
-            for ( i = 0 ; i < len ; i++) {
+            for ( i = 0 ; i < w1.strlen() ; i++) {
             
-                char tmp = str[i] ;
                 for ( char c = 'a' ; c <= 'z' ; c++) {
-                
-                    if ( c == tmp )
-                        continue ;
-                    str[i] = c ;
-                    if ( !dict.containsWord(str) ) 
-                        continue ;
-                    else {
+               
+                    temp = queue.dequeue() ;
+                    string str = temp.peel() ; 
+                    if ( c != str[i] && dict.containWord(str) ) {
                     
-                        if  has not already been used in a ladder before {
+                        if  ( !used.containWord(str) ) {
                         
-                            if ( str == w2 ) {
+                            if ( str == w2 ) { // 一个ladder已完成 , 把这个栈放入res队列中 , 
                             
-                                new  a stack ?
+                                temp.push(str) ;          
+                                stack<string> rela = temp ;
+                                res.enqueue(rela) ;
+                                Stack<string> anew ;
+                                anew.push(w1) ;
+                                queue.enqueue(anew) ;                      
                             }
 
                             else {
@@ -135,6 +133,7 @@ int main() {
                                 stack<string> rela = temp ; // copy ;
                                 rela.push(str) ;
                                 queue.enqueue(rela) ; 
+                                used.add(str) ; // 加入已存在的 ladder 
                             }
                         } 
                     }
@@ -143,8 +142,6 @@ int main() {
             }
 
         }
-
-  }
     long min = 10000000 ;
     stack<string> mini ;
     while ( !queue.isEmpty() ){
@@ -156,6 +153,8 @@ int main() {
        }
         
     }
+
+
 
 
     return 0;
