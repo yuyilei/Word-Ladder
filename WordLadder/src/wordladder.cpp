@@ -8,14 +8,35 @@
 #include <iostream>
 #include <string>
 #include "console.h"
+#include "stack.h"
+#include "simpio.h"
+#include "queue.h"
+#include "map.h"
+#include "vector.h"
+#include <stack>
 
 using namespace std;
 
 string lower( string s ){
 
-    for ( int i = 0 ; i < s.lenght() ; i++ ) 
-        s[i] = tolower(s[i])
+    for ( int i = 0 ; i < s.length() ; i++ )
+        s[i] = tolower(s[i]) ;
     return s ;
+}
+
+int vaild(Vector<string> & lines , string s) {
+
+
+    int flag = 0 ;
+    for ( int i = 0 ; i < lines.size()  ; i++){
+    
+        if (lines[i] == s ){
+        
+            flag = 1 ;
+            break ; 
+        }
+    }
+    return flag ;
 }
 
 int main() {
@@ -25,10 +46,12 @@ int main() {
     string w2 ;
     ifstream in ; 
     int flag = 0 ;
+    Vector<string> lines ;
     
-    cout << "Welcome to CS 106B Word Ladder." < endl ;
+    cout << "Welcome to CS 106B Word Ladder." << endl ;
     cout << "Please give me two English words, and I will change the " << endl ;
     cout << "first into the second by changing one letter at a time." << endl ;
+    cout << "Dictionary file name?" << endl ;
 
     while ( true ){   // 打开字典文件
     
@@ -37,9 +60,20 @@ int main() {
         if ( in.fail() ) {
         
             cout << "Unable to open that file.  Try again." << endl ;
+            in.clear() ;
         }
 
-        else {
+        else { 
+    
+            while (true) {
+            
+                string line ;
+                getLine(in,line) ;
+                if (in.fail()) 
+                    break ;
+                else 
+                    lines.add(line) ;
+            }
         
             break ;
         }
@@ -51,9 +85,9 @@ int main() {
     cin >> w1 ;
     cout << "Word #2 (or Enter to quit):" << endl ;
     cin >> w2 ;
-    cout << "Have a nice day." << endl ;
+//    cout << "Have a nice day." << endl ;
     
-    if ( w1.length != w2.length ) {
+    if ( w1.length() != w2.length() ) {
     
         cout << "The two words must be the same length." << endl ;
         continue ;
@@ -61,9 +95,8 @@ int main() {
 
     else {
     
-        Lexicon dict(dic) ;
-        if ( !dict.containsWord(w1) || !dict.containsWord(w2) ){
-            cont << "The two words must be found in the dictionary."  << endl ; 
+        if ( vaild(lines,w1) == 0 || vaild(lines,w2) == 0){
+            cout << "The two words must be found in the dictionary."  << endl ;
             continue ;
             } 
 
@@ -77,8 +110,7 @@ int main() {
 
             else {
             
-                if ( w1 == 'Q' || w2 == 'Q') {
-                
+                if ( w1[0] == 'Q' ) {
                     cout << "Have a nice day." << endl; 
                     break ;
                 }
@@ -97,67 +129,78 @@ int main() {
         w1 = lower(w1) ;
         w2 = lower(w2) ;
         cout << "A ladder from " << w2 << " back to " << w1 << ":" << endl ;
-        Lexicon dict(dic) ;
-        Queue<stack> queue ; 
+        Queue<Stack<string>> queue ;
         Stack<string> stack ;
-        Stack<string> temp ;
         stack.push(w1) ;
+        Stack<string> res ;
         queue.enqueue(stack) ;
-        Lexicon used<"used.txt"> ;  // 存已存在的ladder 
-        Queue<stack> res ;
+        Map<string,int> found ;
+        int j = 1 ;
+        found.put(w1,1) ;
+        int flag2 = 0 ;
 
-        while ( !queue.isEmpty() ) { // 循环条件有问题啊!!
+        while ( !queue.isEmpty() ) { 
         
-            for ( i = 0 ; i < w1.strlen() ; i++) {
+            stack = queue.dequeue() ;
+            string str = stack.peek() ;
+            for ( int i = 0 ; i < str.length() ; i++) {
             
-                for ( char c = 'a' ; c <= 'z' ; c++) {
-               
-                    temp = queue.dequeue() ;
-                    string str = temp.peel() ; 
-                    if ( c != str[i] && dict.containWord(str) ) {
+                string output = str ;
+
+                for ( int c = 97 ; c <= 122 ; c++) {
+                   
+                      output[i] = char(c) ;
+
+                   if ( output != str && vaild(lines,output ) == 1   ) {
                     
-                        if  ( !used.containWord(str) ) {
-                        
-                            if ( str == w2 ) { // 一个ladder已完成 , 把这个栈放入res队列中 , 
+                            if ( output == w2 ) {
                             
-                                temp.push(str) ;          
-                                stack<string> rela = temp ;
-                                res.enqueue(rela) ;
-                                Stack<string> anew ;
-                                anew.push(w1) ;
-                                queue.enqueue(anew) ;                      
+                              //  found.put(output,j++) ;
+
+                                Stack<string> res = stack ;
+                               // cout << "stack " << stack.size() << endl ;
+                                res.push(w2) ;
+                                //cout << output << endl ;
+                                flag2 = 1;
+                                 while (res.size() ){
+
+                                        string a = res.pop() ;
+                                        cout << a << endl ;
+
+                                     }
+                               //cout << "1" << endl ;
+                                break ;
                             }
 
                             else {
                             
-                                stack<string> rela = temp ; // copy ;
-                                rela.push(str) ;
-                                queue.enqueue(rela) ; 
-                                used.add(str) ; // 加入已存在的 ladder 
+                             //   found.put(output,j++) ;
+                                Stack<string> copy ;
+                                copy =  stack ;
+                                copy.push(output) ;
+                                queue.enqueue(copy) ; 
+                               // cout << output << endl ;
                             }
                         } 
                     }
 
+            if ( flag2 == 1) {
+                break ;
+             //   cout << "1" << endl ;
                 }
             }
 
-        }
-    long min = 10000000 ;
-    stack<string> mini ;
-    while ( !queue.isEmpty() ){
-    
-        temp = queue.dequeue() ;
-        if ( temp.size() < mini ){
-            min = temp.size() ;
-            mini = temp ;
+            if  (flag2 ==  1)
+                break ;
        }
+
+/*        cout << res.size() << endl ;
+        while ( res.size() != 0 ) {
         
+            string out = res.pop() ;
+            cout << out << endl ;
+        }
+*/
     }
-
-
-
-
     return 0;
-
-   
 }
